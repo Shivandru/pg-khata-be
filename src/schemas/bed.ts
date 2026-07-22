@@ -1,16 +1,15 @@
 import { z } from 'zod';
+import { id, ID_PREFIXES } from '../utils/common.ts';
 
-const bedSchema = z.object({
-  bedId: z.string(),
-  roomId: z.string().min(2),
+export const bedSchema = z.object({
+  bedId: id(ID_PREFIXES.bed),
+  roomId: id(ID_PREFIXES.room),
   label: z.string().min(1).max(10), // e.g. "A", "B", "1"
   rentAmount: z.number().positive(),
 });
 
-const createBedSchema = bedSchema.omit({ bedId: true, roomId: true });
+export const createBedSchema = bedSchema.omit({ bedId: true, roomId: true });
 
-const updateBedSchema = bedSchema
+export const updateBedSchema = bedSchema
   .pick({ label: true, rentAmount: true })
   .partial();
-
-module.exports = { bedSchema, createBedSchema, updateBedSchema };

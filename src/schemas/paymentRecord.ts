@@ -1,41 +1,34 @@
 import { z } from 'zod';
+import { id, ID_PREFIXES, dateOnly, monthOnly } from '../utils/common.ts';
 
-const paymentStatusEnum = z.enum(['pending', 'paid']);
-const MONTH = z.templateLiteral(["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]);
+export const paymentStatusEnum = z.enum(['pending', 'paid']);
 
-const paymentRecordSchema = z.object({
-  paymentId: z.string(),
-  tenancyId: z.string().min(2),
-  month: MONTH,
+export const paymentRecordSchema = z.object({
+  paymentId: id(ID_PREFIXES.payment),
+  tenancyId: id(ID_PREFIXES.tenancy),
+  month: monthOnly,
   amountDue: z.number().nonnegative(),
   amountPaid: z.number().nonnegative().default(0),
   status: paymentStatusEnum.default('pending'),
-  paidOn: z.date(),
+  paidOn: dateOnly.nullable().default(null),
 });
 
 // POST /properties/:propertyId/payments/generate
-const generatePaymentsSchema = z.object({
-  month: MONTH,
+export const generatePaymentsSchema = z.object({
+  month: monthOnly,
 });
 
 // PUT /payments/:id — this is the manual-entry seam today.
 // Later, the Rails payment service (or a webhook handler you add) can
 // call this exact same shape, so nothing else in the app needs to change.
-const updatePaymentSchema = z
+export const updatePaymentSchema = z
   .object({
     amountPaid: z.number().nonnegative(),
     status: paymentStatusEnum,
-    paidOn: z.date(),
+    paidOn: dateOnly.nullable(),
   })
   .partial()
   .refine(
     (data) => Object.keys(data).length > 0,
     'At least one field must be provided'
   );
-
-module.exports = {
-  paymentRecordSchema,
-  paymentStatusEnum,
-  generatePaymentsSchema,
-  updatePaymentSchema,
-};

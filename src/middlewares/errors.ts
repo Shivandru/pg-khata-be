@@ -8,7 +8,6 @@ export default async function errorHandler(err: Error, _req: Request, res: Respo
         return;
     }
 
-    // sysLogger.error(err.message);
     res.status(HttpStatusCodes.ServerError.INTERNAL_SERVER_ERROR).json({
         message: err instanceof Error ? err.message : "Internal Server Error",
     });

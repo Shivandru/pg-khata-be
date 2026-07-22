@@ -6,8 +6,6 @@ const allowedOrigins = [
     "http://localhost:3000",
 ];
 
-// const ipRegex = /^http:\/\/192\.168\.68\.\d{1,3}(:\d{1,5})?$/;
-// const clientRegex = /^https:\/\/client-webview.*\.letsterra\.com/;
 const ngrokRegex = /^https:\/\/.*\.ngrok-free\.app/;
 
 export const corsVerifier: CorsOptions["origin"] = (origin, callback) => {
