@@ -19,3 +19,6 @@ export const createPropertySchema = propertySchema.omit({ propertyId: true, owne
 export const updatePropertySchema = propertySchema
   .pick({ name: true, address: true })
   .partial();
+
+// What the API returns in responses
+export const responsePropertySchema = propertySchema;

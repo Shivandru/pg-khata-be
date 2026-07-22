@@ -6,12 +6,18 @@ import setupLoggerMiddleware from "./middlewares/logger.ts";
 import setupCorsMiddleware from "./middlewares/cors-setup.ts";
 import errorHandler from "./middlewares/errors.ts";
 
+import apiRouter from "./routes/index.ts";
+
 dotenv.config();
 const PORT = env.PORT ?? 7700;
 
 const app = express();
+app.use(express.json());
 setupLoggerMiddleware(app);
 setupCorsMiddleware(app);
+
+app.use(apiRouter.getRouter());
+
 app.use(errorHandler);
 
 app.listen(PORT, async () =>{
