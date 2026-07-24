@@ -13,3 +13,11 @@ export const createBedSchema = bedSchema.omit({ bedId: true, roomId: true });
 export const updateBedSchema = bedSchema
   .pick({ label: true, rentAmount: true })
   .partial();
+
+export const responseBedSchema = bedSchema;
+
+export const responseBedListSchema = z.array(
+  bedSchema.extend({
+    isOccupied: z.boolean(),
+  })
+);

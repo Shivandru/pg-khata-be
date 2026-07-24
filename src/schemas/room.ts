@@ -8,9 +8,17 @@ export const roomSchema = z.object({
   floor: z.number().int().min(0).max(50),
 });
 
-// propertyId comes from the route param (/properties/:propertyId/rooms), not the body
 export const createRoomSchema = roomSchema.omit({ roomId: true, propertyId: true });
 
 export const updateRoomSchema = roomSchema
   .pick({ roomNumber: true, floor: true })
   .partial();
+
+export const responseRoomSchema = roomSchema;
+
+export const responseRoomListSchema = z.array(
+  roomSchema.extend({
+    bedCount: z.number().int().nonnegative(),
+    occupiedCount: z.number().int().nonnegative(),
+  })
+);

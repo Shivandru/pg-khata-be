@@ -13,8 +13,8 @@ const PORT = env.PORT ?? 7700;
 
 const app = express();
 app.use(express.json());
-setupLoggerMiddleware(app);
 setupCorsMiddleware(app);
+setupLoggerMiddleware(app);
 
 app.use(apiRouter.getRouter());
 
