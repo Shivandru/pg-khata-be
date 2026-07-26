@@ -19,3 +19,4 @@
 - [x] Create Room and Bed Routes (`src/routes/room.routes.ts`, `src/routes/bed.routes.ts`)
 - [x] Register Room and Bed routes in `src/routes/index.ts`
 
+
