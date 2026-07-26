@@ -1,7 +1,7 @@
 import type { Collection } from "mongodb";
 import MongoConnection from "../config/db.ts";
 import { generateId, ID_PREFIXES } from "../utils/common.ts";
-import { bedSchema } from "../schemas/bed.ts";
+import { bedSchema, type UpdateBed } from "../schemas/bed.ts";
 import type { z } from "zod";
 
 export type Bed = z.infer<typeof bedSchema>;
@@ -21,25 +21,25 @@ export class BedRepository {
         return newBed;
     }
 
-    async findById(bedId: string): Promise<Bed | null> {
-        return await this.getCollection().findOne({ bedId });
+    async findById(bedId: string, propertyId: string, roomId: string): Promise<Bed | null> {
+        return await this.getCollection().findOne({ bedId, propertyId, roomId });
     }
 
-    async findByRoomId(roomId: string): Promise<Bed[]> {
-        return await this.getCollection().find({ roomId }).toArray();
+    async findByRoomId(roomId: string, propertyId: string): Promise<Bed[]> {
+        return await this.getCollection().find({ roomId, propertyId }).toArray();
     }
 
-    async countByRoomId(roomId: string): Promise<number> {
-        return await this.getCollection().countDocuments({ roomId });
+    async countByRoomId(roomId: string, propertyId: string): Promise<number> {
+        return await this.getCollection().countDocuments({ roomId, propertyId });
     }
 
-    async update(bedId: string, updateData: Partial<Omit<Bed, "bedId" | "roomId">>): Promise<Bed | null> {
-        await this.getCollection().updateOne({ bedId }, { $set: updateData });
-        return await this.findById(bedId);
+    async update({bedId, roomId, propertyId, updateData}: {bedId: string, roomId: string, propertyId: string, updateData: UpdateBed}): Promise<Bed | null> {
+        await this.getCollection().updateOne({ bedId, roomId, propertyId }, { $set: updateData });
+        return await this.findById(bedId, propertyId, roomId);
     }
 
-    async delete(bedId: string): Promise<boolean> {
-        const result = await this.getCollection().deleteOne({ bedId });
+    async delete(bedId: string, propertyId: string, roomId: string): Promise<boolean> {
+        const result = await this.getCollection().deleteOne({ bedId, roomId, propertyId });
         return result.deletedCount > 0;
     }
 }

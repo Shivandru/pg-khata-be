@@ -20,13 +20,14 @@ const propertyIdParamSchema = z.object({
     propertyId: id(ID_PREFIXES.property),
 });
 
-const roomIdParamSchema = z.object({
-    id: id(ID_PREFIXES.room),
-});
+const propertyRoomIdParamSchema = z.object({
+    propertyId: id(ID_PREFIXES.property),
+    roomId: id(ID_PREFIXES.room),
+})
 
 // Create room under a property
 router.post(
-    "/properties/:propertyId/rooms",
+    "/:propertyId/rooms",
     validate.params(propertyIdParamSchema),
     validate.body(createRoomSchema),
     validate.response(responseRoomSchema),
@@ -35,16 +36,24 @@ router.post(
 
 // Get rooms for a property
 router.get(
-    "/properties/:propertyId/rooms",
+    "/:propertyId/rooms",
     validate.params(propertyIdParamSchema),
     validate.response(responseRoomListSchema),
     controller.getRoomsByProperty
 );
 
+// Get room by ID for a property
+router.get(
+    "/:propertyId/rooms/:roomId",
+    validate.params(propertyRoomIdParamSchema),
+    validate.response(responseRoomSchema),
+    controller.getRoomById
+);
+
 // Update room
-router.put(
-    "/rooms/:id",
-    validate.params(roomIdParamSchema),
+router.patch(
+    "/:propertyId/rooms/:roomId",
+    validate.params(propertyRoomIdParamSchema),
     validate.body(updateRoomSchema),
     validate.response(responseRoomSchema),
     controller.update
@@ -52,8 +61,8 @@ router.put(
 
 // Delete room
 router.delete(
-    "/rooms/:id",
-    validate.params(roomIdParamSchema),
+    "/:propertyId/rooms/:roomId",
+    validate.params(propertyRoomIdParamSchema),
     controller.delete
 );
 

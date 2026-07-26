@@ -4,6 +4,7 @@ import { PropertyService } from "./property.service.ts";
 import { NotFoundException, ConflictException } from "../utils/exceptions/client.ts";
 import RequestLogger from "../middlewares/RequestLogger.ts";
 import MongoConnection from "../config/db.ts";
+import type { UpdateRoom } from "../schemas/room.ts";
 
 export class RoomService {
     private roomRepository: RoomRepository;
@@ -16,17 +17,17 @@ export class RoomService {
         this.propertyService = new PropertyService();
     }
 
-    async create(propertyId: string, roomNumber: string, floor: number) {
+    async create(propertyId: string, roomNumber: string, floor: number, bedCount: number, occupiedCount: number) {
         // Check if property exists
         await this.propertyService.getById(propertyId);
 
-        const room = await this.roomRepository.create({ propertyId, roomNumber, floor });
+        const room = await this.roomRepository.create({ propertyId, roomNumber, floor, bedCount, occupiedCount });
         RequestLogger.info(`Room created: Room ${room.roomNumber} on Floor ${room.floor} (${room.roomId})`);
         return room;
     }
 
-    async getById(roomId: string) {
-        const room = await this.roomRepository.findById(roomId);
+    async getById(roomId: string, propertyId: string) {
+        const room = await this.roomRepository.findById(roomId, propertyId);
         if (!room) {
             throw new NotFoundException(`Room with ID ${roomId} not found`);
         }
@@ -70,9 +71,9 @@ export class RoomService {
         });
     }
 
-    async update(roomId: string, updateData: { roomNumber?: string; floor?: number }) {
-        await this.getById(roomId);
-        const updatedRoom = await this.roomRepository.update(roomId, updateData);
+    async update(roomId: string, propertyId: string, updateData: UpdateRoom) {
+        await this.getById(roomId, propertyId);
+        const updatedRoom = await this.roomRepository.update(roomId, propertyId, updateData);
         if (!updatedRoom) {
             throw new NotFoundException(`Room with ID ${roomId} not found for update`);
         }
@@ -80,11 +81,11 @@ export class RoomService {
         return updatedRoom;
     }
 
-    async delete(roomId: string) {
-        await this.getById(roomId);
+    async delete(roomId: string, propertyId: string) {
+        await this.getById(roomId, propertyId);
         
         // Check if there are beds in the room
-        const bedCount = await this.bedRepository.countByRoomId(roomId);
+        const bedCount = await this.bedRepository.countByRoomId(roomId, propertyId);
         if (bedCount > 0) {
             throw new ConflictException(`Cannot delete room with ID ${roomId} because it contains beds`);
         }

@@ -37,7 +37,7 @@ router.get(
 );
 
 // Update property by ID
-router.put(
+router.patch(
     "/:id",
     validate.params(propertyIdParamSchema),
     validate.body(updatePropertySchema),

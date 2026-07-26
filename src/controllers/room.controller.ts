@@ -11,8 +11,8 @@ export class RoomController {
 
     create = async (req: Request, res: Response) => {
         const { propertyId } = req.params as { propertyId: string };
-        const { roomNumber, floor } = req.body;
-        const room = await this.roomService.create(propertyId, roomNumber, floor);
+        const { roomNumber, floor, bedCount, occupiedCount } = req.body;
+        const room = await this.roomService.create(propertyId, roomNumber, floor, bedCount, occupiedCount);
         res.status(HttpStatusCodes.Success.CREATED).json(room);
     };
 
@@ -22,15 +22,21 @@ export class RoomController {
         res.status(HttpStatusCodes.Success.OK).json(rooms);
     };
 
+    getRoomById = async (req: Request, res: Response) => {
+        const { roomId, propertyId } = req.params as { roomId: string, propertyId: string };
+        const room = await this.roomService.getById(roomId, propertyId);
+        res.status(HttpStatusCodes.Success.OK).json(room);
+    }
+
     update = async (req: Request, res: Response) => {
-        const { id } = req.params as { id: string };
-        const room = await this.roomService.update(id, req.body);
+        const { roomId, propertyId } = req.params as { roomId: string, propertyId: string };
+        const room = await this.roomService.update(roomId, propertyId, req.body);
         res.status(HttpStatusCodes.Success.OK).json(room);
     };
 
     delete = async (req: Request, res: Response) => {
-        const { id } = req.params as { id: string };
-        const result = await this.roomService.delete(id);
+        const { roomId, propertyId } = req.params as { roomId: string, propertyId: string };
+        const result = await this.roomService.delete(roomId, propertyId);
         res.status(HttpStatusCodes.Success.OK).json(result);
     };
 }

@@ -4,20 +4,21 @@ import { id, ID_PREFIXES } from '../utils/common.ts';
 export const bedSchema = z.object({
   bedId: id(ID_PREFIXES.bed),
   roomId: id(ID_PREFIXES.room),
+  propertyId: id(ID_PREFIXES.property),
   label: z.string().min(1).max(10), // e.g. "A", "B", "1"
   rentAmount: z.number().positive(),
+  isOccupied: z.boolean().default(false),
 });
 
-export const createBedSchema = bedSchema.omit({ bedId: true, roomId: true });
+export const createBedSchema = bedSchema.omit({ bedId: true, roomId: true, propertyId: true });
 
 export const updateBedSchema = bedSchema
-  .pick({ label: true, rentAmount: true })
+  .pick({ label: true, rentAmount: true, isOccupied: true })
   .partial();
 
 export const responseBedSchema = bedSchema;
+export type UpdateBed = z.infer<typeof updateBedSchema>;
+export type CreateBed = z.infer<typeof createBedSchema>;
+export type Bed = z.infer<typeof bedSchema>;
 
-export const responseBedListSchema = z.array(
-  bedSchema.extend({
-    isOccupied: z.boolean(),
-  })
-);
+export const responseBedListSchema = z.array(bedSchema);
