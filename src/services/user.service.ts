@@ -1,8 +1,7 @@
-import bcrypt from 'bcrypt';
-import type { Role, User } from './../schemas/user.ts';
-import { UserRepository } from "../repository/user.repository.ts";
-import { NotFoundException, ConflictException } from "../utils/exceptions/client.ts";
 import RequestLogger from "../middlewares/RequestLogger.ts";
+import { UserRepository } from "../repository/user.repository.ts";
+import { ConflictException, NotFoundException } from "../utils/exceptions/client.ts";
+import type { Provider, Role, User } from './../schemas/user.ts';
 
 export class UserServices {
     private userRepository: UserRepository;
@@ -11,13 +10,12 @@ export class UserServices {
         this.userRepository = new UserRepository();
     }
 
-    async create(name: string, email: string, password: string, phone: string, role: Role): Promise<User> {
+    async create(name: string, email: string, phone: string, role: Role, provider: Provider): Promise<User> {
         const existingUser = await this.userRepository.getUserByEmail(email);
         if (existingUser) {
             throw new ConflictException(`User with email ${email} already exists`);
         }
-        const passwordHash = await bcrypt.hash(password, 10);
-        const user = await this.userRepository.create({ name, email, password: passwordHash, phone, role });
+        const user = await this.userRepository.create({ name, email, phone, role, provider });
         RequestLogger.info(`User created: ${user.userId}`);
         return user;
     }
