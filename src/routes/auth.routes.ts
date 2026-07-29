@@ -4,9 +4,11 @@ import RequestLogger from "../middlewares/RequestLogger.ts";
 import { createUserSchema, authResponseSchema } from "../schemas/user.ts";
 import { AuthController } from "../controllers/auth.controller.ts";
 
+export default function createAuthRouter(
+    authController: AuthController
+){
 const router = new AppRouter();
 const validate = createValidator();
-const controller = new AuthController();
 
 router.use("/", RequestLogger.getMiddleware("Auth"));
 
@@ -14,7 +16,8 @@ router.post(
     "/signup",
     validate.body(createUserSchema),
     validate.response(authResponseSchema),
-    controller.signup
+    authController.signup
 );
 
-export default router;
+return router;
+}

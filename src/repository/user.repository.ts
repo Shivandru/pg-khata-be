@@ -1,14 +1,17 @@
-import type { Collection } from "mongodb";
-import MongoConnection from "../config/db.ts";
-import { generateId, ID_PREFIXES } from "../utils/common.ts";
+import type { Collection, Db } from "mongodb";
 import { type CreateUser, type User } from "../schemas/user.ts";
+import { generateId, ID_PREFIXES } from "../utils/common.ts";
 
 
 
 
 export class UserRepository {
-    private getCollection(): Collection<User> {
-        return MongoConnection.getInstance().getDb().collection<User>("users");
+
+    constructor(
+        private readonly db: Db
+    ) {}
+    private get collection(): Collection<User> {
+        return this.db.collection<User>("users");
     }
 
     async create(userData: CreateUser): Promise<User> {
@@ -18,25 +21,25 @@ export class UserRepository {
             guestId: null,
             ...userData,
         };
-        await this.getCollection().insertOne(newUser);
+        await this.collection.insertOne(newUser);
         return newUser;
     }
 
     async getUserById(userId: string): Promise<User | null> {
-        return await this.getCollection().findOne({ userId });
+        return await this.collection.findOne({ userId });
     }
 
     async getUserByEmail(email: string): Promise<User | null> {
-        return await this.getCollection().findOne({ email });
+        return await this.collection.findOne({ email });
     }
 
     async updateUser(userId: string, updateData: Partial<Omit<User, "userId" | "propertyId" | "guestId">>): Promise<User | null> {
-        await this.getCollection().updateOne({ userId }, { $set: updateData });
+        await this.collection.updateOne({ userId }, { $set: updateData });
         return await this.getUserById(userId);
     }
 
     async deleteUser(userId: string): Promise<boolean> {
-        const result = await this.getCollection().deleteOne({ userId });
+        const result = await this.collection.deleteOne({ userId });
         return result.deletedCount > 0;
     }
 }

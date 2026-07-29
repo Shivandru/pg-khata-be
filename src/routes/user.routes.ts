@@ -6,9 +6,11 @@ import { z } from "zod";
 import { id, ID_PREFIXES } from "../utils/common.ts";
 import { UserController } from "../controllers/user.controller.ts";
 
-const router = new AppRouter();
+export default function createUserRouter(
+    userController: UserController,
+) {
+    const router = new AppRouter();
 const validate = createValidator();
-const controller = new UserController();
 
 const userIdParamSchema = z.object({
     id: id(ID_PREFIXES.user),
@@ -21,14 +23,14 @@ router.post(
     "/",
     validate.body(createUserSchema),
     validate.response(userSchema),
-    controller.create
+    userController.create
 )
 
 router.get(
     "/:id",
     validate.params(userIdParamSchema),
     validate.response(userSchema),
-    controller.getUser
+    userController.getUser
 )
 
 router.patch(
@@ -36,13 +38,14 @@ router.patch(
     validate.params(userIdParamSchema),
     validate.body(updateUserSchema),
     validate.response(userSchema),
-    controller.update
+    userController.update
 )
 
 router.delete(
     "/:id",
     validate.params(userIdParamSchema),
-    controller.delete
+    userController.delete
 )
 
-export default router;
+return router;
+}

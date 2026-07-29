@@ -3,11 +3,10 @@ import { NotFoundException } from "../utils/exceptions/client.ts";
 import RequestLogger from "../middlewares/RequestLogger.ts";
 
 export class PropertyService {
-    private propertyRepository: PropertyRepository;
 
-    constructor() {
-        this.propertyRepository = new PropertyRepository();
-    }
+    constructor(
+        private readonly propertyRepository: PropertyRepository
+    ) {}
 
     async create(name: string, address: string, ownerId: string) {
         const property = await this.propertyRepository.create({ name, address, ownerId });

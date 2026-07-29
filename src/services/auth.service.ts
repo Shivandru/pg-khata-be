@@ -5,11 +5,10 @@ import { generateAccessToken } from "../utils/jwt.ts";
 import RequestLogger from "../middlewares/RequestLogger.ts";
 
 export class AuthService {
-    private userRepository: UserRepository;
 
-    constructor() {
-        this.userRepository = new UserRepository();
-    }
+    constructor(
+        private readonly userRepository: UserRepository
+    ) {}
 
     async signup(userData: CreateUser) {
     let user = await this.userRepository.getUserByEmail(userData.email);

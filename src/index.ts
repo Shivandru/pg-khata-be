@@ -1,30 +1,35 @@
-import express from "express";
 import dotenv from "dotenv";
-import { env} from "./config/env-validator.ts";
+import express from "express";
+import { buildContainer } from "./config/container.ts";
 import MongoConnection from "./config/db.ts";
-import setupLoggerMiddleware from "./middlewares/logger.ts";
+import { env } from "./config/env-validator.ts";
 import setupCorsMiddleware from "./middlewares/cors-setup.ts";
 import errorHandler from "./middlewares/errors.ts";
-
-import apiRouter from "./routes/index.ts";
+import setupLoggerMiddleware from "./middlewares/logger.ts";
+import createApiRouter from "./routes/index.ts";
 
 dotenv.config();
 const PORT = env.PORT ?? 7700;
 
-const app = express();
-app.use(express.json());
-setupCorsMiddleware(app);
-setupLoggerMiddleware(app);
+async function bootstrap() {
+    await MongoConnection.getInstance().connect();
 
-app.use(apiRouter.getRouter());
+    const app = express();
 
-app.use(errorHandler);
+    app.use(express.json());
 
-app.listen(PORT, async () =>{
-    console.log(`Server running on port ${PORT}`);
-    try {
-        await MongoConnection.getInstance().connect();
-    } catch (error) {
-        throw new Error(`Error while connecting db ${error}`);
-    }
-});
+    setupCorsMiddleware(app);
+    setupLoggerMiddleware(app);
+    const container = buildContainer();
+    const apiRouter = createApiRouter(container);
+
+    app.use(apiRouter.getRouter());
+
+    app.use(errorHandler);
+
+    app.listen(PORT, () => {
+        console.log(`Server running on ${PORT}`);
+    });
+}
+
+bootstrap();

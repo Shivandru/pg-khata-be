@@ -3,16 +3,15 @@ import { BedService } from "../services/bed.service.ts";
 import { HttpStatusCodes } from "../utils/enums/http.ts";
 
 export class BedController {
-    private bedService: BedService;
 
-    constructor() {
-        this.bedService = new BedService();
-    }
+    constructor(
+        private readonly bedService: BedService
+    ) {}
 
     create = async (req: Request, res: Response) => {
         const { propertyId, roomId } = req.params as { roomId: string, propertyId: string };
-        const { label, rentAmount, isOccupied } = req.body;
-        const bed = await this.bedService.create(roomId, label, rentAmount, propertyId, isOccupied);
+        const { label, isOccupied } = req.body;
+        const bed = await this.bedService.create(roomId, label, propertyId, isOccupied);
         res.status(HttpStatusCodes.Success.CREATED).json(bed);
     };
 

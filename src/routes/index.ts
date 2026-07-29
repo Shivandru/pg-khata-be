@@ -1,17 +1,21 @@
 import AppRouter from "./AppRouter.ts";
-import propertyRouter from "./property.routes.ts";
-import roomRouter from "./room.routes.ts";
-import bedRouter from "./bed.routes.ts";
-import userRouter from "./user.routes.ts";
-import authRouter from "./auth.routes.ts";
+import type { Container } from "../config/container.ts";
+import createAuthRouter from "./auth.routes.ts";
+import createPropertyRouter from "./property.routes.ts";
+import createUserRouter from "./user.routes.ts";
+import createRoomRouter from "./room.routes.ts";
+import createBedRouter from "./bed.routes.ts";
 
-const router = new AppRouter();
 
-router.use("/auth", authRouter);
-router.use("/properties", propertyRouter);
-router.use("/users", userRouter);
-router.use("/properties", roomRouter);
-router.use("/properties", bedRouter);
+// export default router;
+export default function createApiRouter(container: Container) {
+    const router = new AppRouter();
 
-export default router;
+    router.use("/auth", createAuthRouter(container.authController));
+    router.use("/properties", createPropertyRouter(container.propertyController));
+    router.use("/users", createUserRouter(container.userController));
+    router.use("/properties", createRoomRouter(container.roomController));
+    router.use("/properties", createBedRouter(container.bedController));
 
+    return router;
+}

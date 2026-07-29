@@ -4,11 +4,10 @@ import { HttpStatusCodes } from "../utils/enums/http.ts";
 import type { CreateUser } from "../schemas/user.ts";
 
 export class AuthController {
-    private authService: AuthService;
 
-    constructor() {
-        this.authService = new AuthService();
-    }
+    constructor(
+        private readonly authService: AuthService
+    ) {}
 
     signup = async (req: Request, res: Response) => {
         const userData = req.body as CreateUser;
@@ -18,12 +17,4 @@ export class AuthController {
 
         res.status(HttpStatusCodes.Success.CREATED).json(result);
     };
-
-    // login = async (req: Request, res: Response) => {
-    //     const { email } = req.body as { email: string };
-
-    //     const result = await this.authService.login(email);
-
-    //     res.status(HttpStatusCodes.Success.OK).json(result);
-    // };
 }

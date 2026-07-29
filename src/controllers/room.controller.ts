@@ -3,11 +3,10 @@ import { RoomService } from "../services/room.service.ts";
 import { HttpStatusCodes } from "../utils/enums/http.ts";
 
 export class RoomController {
-    private roomService: RoomService;
 
-    constructor() {
-        this.roomService = new RoomService();
-    }
+    constructor(
+        private readonly roomService: RoomService
+    ) {}
 
     create = async (req: Request, res: Response) => {
         const { propertyId } = req.params as { propertyId: string };

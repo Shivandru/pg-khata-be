@@ -4,20 +4,19 @@ import { UnauthorizedException } from "../utils/exceptions/client.ts";
 import { HttpStatusCodes } from "../utils/enums/http.ts";
 
 export class UserController {
-  private userService = new UserServices();
-  constructor() {
-    this.userService = new UserServices();
-  }
+  constructor(
+    private readonly userService: UserServices
+  ) {}
 
   create = async (req: Request, res: Response) => {
     try {
-      const { name, email, password, phone, role } = req.body;
+      const { name, email, phone, role, provider } = req.body;
       const user = await this.userService.create(
         name,
         email,
-        password,
         phone,
         role,
+        provider
       );
       res.status(HttpStatusCodes.Success.CREATED).json(user);
     } catch (error) {

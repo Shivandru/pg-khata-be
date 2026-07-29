@@ -4,11 +4,10 @@ import { UnauthorizedException } from "../utils/exceptions/client.ts";
 import { HttpStatusCodes } from "../utils/enums/http.ts";
 
 export class PropertyController {
-    private propertyService: PropertyService;
 
-    constructor() {
-        this.propertyService = new PropertyService();
-    }
+    constructor(
+        private readonly propertyService: PropertyService
+    ) {}
 
     create = async (req: Request, res: Response) => {
         if (!req.user) {

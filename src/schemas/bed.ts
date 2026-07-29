@@ -6,14 +6,13 @@ export const bedSchema = z.object({
   roomId: id(ID_PREFIXES.room),
   propertyId: id(ID_PREFIXES.property),
   label: z.string().min(1).max(10), // e.g. "A", "B", "1"
-  rentAmount: z.number().positive(),
   isOccupied: z.boolean().default(false),
 });
 
 export const createBedSchema = bedSchema.omit({ bedId: true, roomId: true, propertyId: true });
 
 export const updateBedSchema = bedSchema
-  .pick({ label: true, rentAmount: true, isOccupied: true })
+  .pick({ isOccupied: true })
   .partial();
 
 export const responseBedSchema = bedSchema;

@@ -7,15 +7,12 @@ import MongoConnection from "../config/db.ts";
 import type { UpdateRoom } from "../schemas/room.ts";
 
 export class RoomService {
-    private roomRepository: RoomRepository;
-    private bedRepository: BedRepository;
-    private propertyService: PropertyService;
 
-    constructor() {
-        this.roomRepository = new RoomRepository();
-        this.bedRepository = new BedRepository();
-        this.propertyService = new PropertyService();
-    }
+    constructor(
+        private readonly roomRepository: RoomRepository,
+        private readonly bedRepository: BedRepository,
+        private readonly propertyService: PropertyService
+    ) {}
 
     async create(propertyId: string, roomNumber: string, floor: number, bedCount: number, occupiedCount: number) {
         // Check if property exists

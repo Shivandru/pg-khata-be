@@ -4,11 +4,10 @@ import { ConflictException, NotFoundException } from "../utils/exceptions/client
 import type { Provider, Role, User } from './../schemas/user.ts';
 
 export class UserServices {
-    private userRepository: UserRepository;
 
-    constructor() {
-        this.userRepository = new UserRepository();
-    }
+    constructor(
+        private readonly userRepository: UserRepository
+    ) {}
 
     async create(name: string, email: string, phone: string, role: Role, provider: Provider): Promise<User> {
         const existingUser = await this.userRepository.getUserByEmail(email);

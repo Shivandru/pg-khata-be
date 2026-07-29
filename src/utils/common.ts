@@ -12,6 +12,7 @@ export const ID_PREFIXES = {
   tenancy: 't',
   payment: 'pm',
   user: 'u',
+  propertyPricing: "pp",
 };
 type PrefixValue = (typeof ID_PREFIXES)[keyof typeof ID_PREFIXES];
 
