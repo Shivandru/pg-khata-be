@@ -13,7 +13,7 @@ export class BedService {
 
     async create(roomId: string, label: string, propertyId: string, isOccupied: boolean) {
         // Ensure Room exists
-        await this.roomService.getById(roomId, propertyId);
+        await this.roomService.getById({roomId, propertyId});
 
         const bed = await this.bedRepository.create({ roomId, label, propertyId, isOccupied });
         RequestLogger.info(`Bed created: Bed ${bed.label} in Room ${bed.roomId} (${bed.bedId})`);
@@ -30,7 +30,7 @@ export class BedService {
 
     async getBedsByRoom(roomId: string, propertyId: string) {
         // Ensure Room exists
-        await this.roomService.getById(roomId, propertyId);
+        await this.roomService.getById({ roomId, propertyId });
 
         const beds = await this.bedRepository.findByRoomId(roomId, propertyId);
         if (beds.length === 0) return [];

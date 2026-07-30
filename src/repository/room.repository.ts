@@ -1,7 +1,8 @@
 import type { Collection, Db } from "mongodb";
-import { generateId, ID_PREFIXES } from "../utils/common.ts";
-import { roomSchema, type UpdateRoom } from "../schemas/room.ts";
 import type { z } from "zod";
+import { roomSchema } from "../schemas/room.ts";
+import type { RoomById, UpdateRoomById } from "../services/room.service.ts";
+import { generateId, ID_PREFIXES } from "../utils/common.ts";
 
 export type Room = z.infer<typeof roomSchema>;
 
@@ -22,21 +23,21 @@ export class RoomRepository {
         return newRoom;
     }
 
-    async findById(roomId: string, propertyId: string): Promise<Room | null> {
-        return await this.collection.findOne({ roomId, propertyId });
+    async findById({roomId, propertyId}: RoomById): Promise<Room | null> {
+        return await this.collection.findOne({ propertyId, roomId });
     }
 
     async findByPropertyId(propertyId: string): Promise<Room[]> {
         return await this.collection.find({ propertyId }).toArray();
     }
 
-    async update(roomId: string, propertyId: string, updateData: UpdateRoom): Promise<Room | null> {
+    async update({ roomId, propertyId, updateData }: UpdateRoomById): Promise<Room | null> {
         await this.collection.updateOne({ propertyId, roomId }, { $set: updateData });
-        return await this.findById(roomId, propertyId);
+        return await this.findById({roomId, propertyId});
     }
 
-    async delete(roomId: string): Promise<boolean> {
-        const result = await this.collection.deleteOne({ roomId });
+    async delete({ roomId, propertyId }: RoomById): Promise<boolean> {
+        const result = await this.collection.deleteOne({ propertyId, roomId });
         return result.deletedCount > 0;
     }
 }

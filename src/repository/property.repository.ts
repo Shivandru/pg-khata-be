@@ -1,6 +1,6 @@
 import type { Collection, Db } from "mongodb";
 import type { z } from "zod";
-import { propertySchema } from "../schemas/property.ts";
+import { propertySchema, type UpdateProperty } from "../schemas/property.ts";
 import { generateId, ID_PREFIXES } from "../utils/common.ts";
 
 export type Property = z.infer<typeof propertySchema>;
@@ -28,7 +28,7 @@ export class PropertyRepository {
         return await this.collection.findOne({ propertyId });
     }
 
-    async update(propertyId: string, updateData: Partial<Omit<Property, "propertyId" | "ownerId">>): Promise<Property | null> {
+    async update(propertyId: string, updateData: UpdateProperty): Promise<Property | null> {
         await this.collection.updateOne({ propertyId }, { $set: updateData });
         return await this.findById(propertyId);
     }

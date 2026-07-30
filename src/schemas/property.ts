@@ -22,3 +22,5 @@ export const updatePropertySchema = propertySchema
 
 // What the API returns in responses
 export const responsePropertySchema = propertySchema;
+
+export type UpdateProperty = z.infer<typeof updatePropertySchema>;

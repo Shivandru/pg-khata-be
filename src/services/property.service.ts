@@ -1,6 +1,13 @@
 import { PropertyRepository } from "../repository/property.repository.ts";
 import { NotFoundException } from "../utils/exceptions/client.ts";
 import RequestLogger from "../middlewares/RequestLogger.ts";
+import type { UpdateProperty } from "../schemas/property.ts";
+
+type CreateProperty = {
+    name: string;
+    address: string;
+    ownerId: string;
+};
 
 export class PropertyService {
 
@@ -8,7 +15,7 @@ export class PropertyService {
         private readonly propertyRepository: PropertyRepository
     ) {}
 
-    async create(name: string, address: string, ownerId: string) {
+    async create({name, address, ownerId}: CreateProperty) {
         const property = await this.propertyRepository.create({ name, address, ownerId });
         RequestLogger.info(`Property created: ${property.name} (${property.propertyId})`);
         return property;
@@ -22,7 +29,7 @@ export class PropertyService {
         return property;
     }
 
-    async update(propertyId: string, updateData: { name?: string; address?: string }) {
+    async update(propertyId: string, updateData: UpdateProperty) {
         // Ensure property exists first (will throw NotFoundException if it doesn't)
         await this.getById(propertyId);
 

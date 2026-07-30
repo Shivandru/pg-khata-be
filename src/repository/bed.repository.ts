@@ -2,6 +2,7 @@ import type { Collection, Db } from "mongodb";
 import type { z } from "zod";
 import { bedSchema, type UpdateBed } from "../schemas/bed.ts";
 import { generateId, ID_PREFIXES } from "../utils/common.ts";
+import type { RoomById } from "../services/room.service.ts";
 
 export type Bed = z.infer<typeof bedSchema>;
 
@@ -33,7 +34,7 @@ export class BedRepository {
         return await this.collection.find({ propertyId, roomId }).toArray();
     }
 
-    async countByRoomId(roomId: string, propertyId: string): Promise<number> {
+    async countByRoomId({ roomId, propertyId }: RoomById): Promise<number> {
         return await this.collection.countDocuments({ propertyId, roomId });
     }
 

@@ -14,7 +14,8 @@ export class PropertyController {
             throw new UnauthorizedException("User not authenticated");
         }
         const { name, address } = req.body;
-        const property = await this.propertyService.create(name, address, req.user.userId);
+        const { userId: ownerId } = req.user;
+        const property = await this.propertyService.create({ name, address, ownerId });
         res.status(HttpStatusCodes.Success.CREATED).json(property);
     };
 
