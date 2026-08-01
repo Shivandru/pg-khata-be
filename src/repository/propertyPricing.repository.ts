@@ -6,7 +6,18 @@ import {
 } from "../schemas/propertyPricing.ts";
 import { generateId, ID_PREFIXES } from "../utils/common.ts";
 
-export default class PropertyPricingRepository {
+export type UpdatePricing = {
+  propertyId: string;
+  propertyPricingId: string;
+  updateData: UpdatePropertyPricing
+};
+
+export type PropertyPricingById = {
+  propertyPricingId: string;
+  propertyId: string;
+};
+
+export class PropertyPricingRepository {
   constructor(private readonly db: Db) {}
 
   get collection(): Collection<PropertyPricing> {
@@ -14,13 +25,20 @@ export default class PropertyPricingRepository {
   }
 
   async create(
-    propertyPricingData: CreatePropertyPricing,
-  ): Promise<PropertyPricing> {
-    const propertyPricingId = generateId(ID_PREFIXES.propertyPricing);
-    const propertyPricing = { propertyPricingId, ...propertyPricingData };
-    await this.collection.insertOne(propertyPricing);
-    return propertyPricing;
-  }
+    propertyId: string,
+    pricingList: CreatePropertyPricing,
+): Promise<PropertyPricing[]> {
+    const propertyPricings: PropertyPricing[] = pricingList.map((pricing) => ({
+        propertyPricingId: generateId(ID_PREFIXES.propertyPricing),
+        propertyId,
+        bedCount: pricing.bedCount,
+        rentAmount: pricing.rentAmount,
+    }));
+
+    await this.collection.insertMany(propertyPricings);
+
+    return propertyPricings;
+}
 
   async findAllByPropertyId(
     propertyId: string,
@@ -48,11 +66,11 @@ export default class PropertyPricingRepository {
     return await this.collection.findOne({ propertyId, propertyPricingId });
   }
 
-  async update(
-    propertyPricingId: string,
-    propertyId: string,
-    updateData: UpdatePropertyPricing,
-  ): Promise<PropertyPricing | null> {
+  async update({
+    propertyPricingId,
+    propertyId,
+    updateData,
+  }: UpdatePricing): Promise<PropertyPricing | null> {
     await this.collection.updateOne(
       { propertyId, propertyPricingId },
       { $set: updateData },
@@ -60,10 +78,10 @@ export default class PropertyPricingRepository {
     return await this.getPropertyPricing(propertyId, propertyPricingId);
   }
 
-  async delete(
-    propertyPricingId: string,
-    propertyId: string,
-  ): Promise<boolean> {
+  async delete({
+    propertyPricingId,
+    propertyId,
+  }: PropertyPricingById): Promise<boolean> {
     const result = await this.collection.deleteOne({
       propertyId,
       propertyPricingId,
