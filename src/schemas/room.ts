@@ -20,3 +20,4 @@ export const responseRoomSchema = roomSchema;
 
 export const responseRoomListSchema = z.array(roomSchema);
 export type UpdateRoom = z.infer<typeof updateRoomSchema>;
+export type RoomListSchema = z.infer<typeof responseRoomListSchema>;

@@ -19,66 +19,79 @@ import { BedController } from "../controllers/bed.controller.ts";
 import { UserController } from "../controllers/user.controller.ts";
 import { AuthController } from "../controllers/auth.controller.ts";
 import { PropertyPricingController } from "../controllers/propertyPricing.controller.ts";
+import { MongoUnitOfWork } from "../application/unitOfWork/mongoUnitOfWork.ts";
+import { PropertySetupService } from "../services/propertySetup.service.ts";
+import { PropertySetupController } from "../controllers/propertySetup.controller.ts";
 
 export interface Container {
-    propertyController: PropertyController;
-    roomController: RoomController;
-    bedController: BedController;
-    userController: UserController;
-    authController: AuthController;
-    propertyPricingController: PropertyPricingController
+  propertyController: PropertyController;
+  roomController: RoomController;
+  bedController: BedController;
+  userController: UserController;
+  authController: AuthController;
+  propertyPricingController: PropertyPricingController;
+  propertySetupController: PropertySetupController;
 }
 
 export function buildContainer(): Container {
-    const db = MongoConnection.getInstance().getDb();
+  const db = MongoConnection.getInstance().getDb();
+  const client = MongoConnection.getInstance().getClient();
+  const unitOfWork = new MongoUnitOfWork(client, db);
 
-    // Repositories
-    const propertyRepository = new PropertyRepository(db);
-    const roomRepository = new RoomRepository(db);
-    const bedRepository = new BedRepository(db);
-    const userRepository = new UserRepository(db);
-    const propertyPricingRepository = new PropertyPricingRepository(db);
+  // Repositories
+  const propertyRepository = new PropertyRepository(db);
+  const roomRepository = new RoomRepository(db);
+  const bedRepository = new BedRepository(db);
+  const userRepository = new UserRepository(db);
+  const propertyPricingRepository = new PropertyPricingRepository(db);
 
+  // Services
+  const propertyService = new PropertyService(propertyRepository);
 
-    // Services
-    const propertyService = new PropertyService(propertyRepository);
+  const roomService = new RoomService(
+    roomRepository,
+    bedRepository,
+    propertyService,
+  );
 
-    const roomService = new RoomService(
-        roomRepository,
-        bedRepository,
-        propertyService
-    );
+  const bedService = new BedService(bedRepository, roomService);
 
-    const bedService = new BedService(
-        bedRepository,
-        roomService
-    );
+  const propertyPricingService = new PropertyPricingService(
+    propertyPricingRepository,
+  );
 
-    const propertyPricingService = new PropertyPricingService(propertyPricingRepository);
+  const userServices = new UserServices(userRepository);
 
-    const userServices = new UserServices(userRepository);
+  const authService = new AuthService(userRepository);
 
-    const authService = new AuthService(userRepository);
+  const propertySetupService = new PropertySetupService(unitOfWork);
 
-    // Controllers
-    const propertyController = new PropertyController(propertyService);
+  // Controllers
+  const propertyController = new PropertyController(propertyService);
 
-    const roomController = new RoomController(roomService);
+  const roomController = new RoomController(roomService);
 
-    const bedController = new BedController(bedService);
+  const bedController = new BedController(bedService);
 
-    const userController = new UserController(userServices);
+  const userController = new UserController(userServices);
 
-    const authController = new AuthController(authService);
+  const authController = new AuthController(authService);
 
-    const propertyPricingController = new PropertyPricingController(propertyPricingService);
+  const propertyPricingController = new PropertyPricingController(
+    propertyPricingService,
+  );
 
-    return {
-        propertyController,
-        roomController,
-        bedController,
-        userController,
-        authController,
-        propertyPricingController
-    };
+  const propertySetupController = new PropertySetupController(
+    propertySetupService,
+  );
+
+  return {
+    propertyController,
+    roomController,
+    bedController,
+    userController,
+    authController,
+    propertyPricingController,
+    propertySetupController,
+  };
 }

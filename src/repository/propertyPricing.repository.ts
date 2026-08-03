@@ -1,4 +1,4 @@
-import type { Collection, Db } from "mongodb";
+import type { Collection, Db, ClientSession } from "mongodb";
 import {
   type CreatePropertyPricing,
   type PropertyPricing,
@@ -9,7 +9,7 @@ import { generateId, ID_PREFIXES } from "../utils/common.ts";
 export type UpdatePricing = {
   propertyId: string;
   propertyPricingId: string;
-  updateData: UpdatePropertyPricing
+  updateData: UpdatePropertyPricing;
 };
 
 export type PropertyPricingById = {
@@ -18,7 +18,10 @@ export type PropertyPricingById = {
 };
 
 export class PropertyPricingRepository {
-  constructor(private readonly db: Db) {}
+  constructor(
+    private readonly db: Db,
+    private readonly session?: ClientSession,
+  ) {}
 
   get collection(): Collection<PropertyPricing> {
     return this.db.collection("propertyPricings");
@@ -27,24 +30,26 @@ export class PropertyPricingRepository {
   async create(
     propertyId: string,
     pricingList: CreatePropertyPricing,
-): Promise<PropertyPricing[]> {
+  ): Promise<PropertyPricing[]> {
     const propertyPricings: PropertyPricing[] = pricingList.map((pricing) => ({
-        propertyPricingId: generateId(ID_PREFIXES.propertyPricing),
-        propertyId,
-        bedCount: pricing.bedCount,
-        rentAmount: pricing.rentAmount,
+      propertyPricingId: generateId(ID_PREFIXES.propertyPricing),
+      propertyId,
+      bedCount: pricing.bedCount,
+      rentAmount: pricing.rentAmount,
     }));
 
-    await this.collection.insertMany(propertyPricings);
+    await this.collection.insertMany(propertyPricings, {
+      session: this.session,
+    });
 
     return propertyPricings;
-}
+  }
 
   async findAllByPropertyId(
     propertyId: string,
-  ): Promise<PropertyPricing[] | null> {
+  ): Promise<PropertyPricing[]> {
     return await this.collection
-      .find({ propertyId })
+      .find({ propertyId }, { session: this.session })
       .sort({ bedCount: 1 })
       .toArray();
   }
@@ -53,17 +58,23 @@ export class PropertyPricingRepository {
     propertyId: string,
     bedCount: number,
   ): Promise<PropertyPricing | null> {
-    return await this.collection.findOne({
-      propertyId,
-      bedCount,
-    });
+    return await this.collection.findOne(
+      {
+        propertyId,
+        bedCount,
+      },
+      { session: this.session },
+    );
   }
 
   async getPropertyPricing(
     propertyId: string,
     propertyPricingId: string,
   ): Promise<PropertyPricing | null> {
-    return await this.collection.findOne({ propertyId, propertyPricingId });
+    return await this.collection.findOne(
+      { propertyId, propertyPricingId },
+      { session: this.session },
+    );
   }
 
   async update({
@@ -74,6 +85,7 @@ export class PropertyPricingRepository {
     await this.collection.updateOne(
       { propertyId, propertyPricingId },
       { $set: updateData },
+      { session: this.session },
     );
     return await this.getPropertyPricing(propertyId, propertyPricingId);
   }
@@ -82,10 +94,13 @@ export class PropertyPricingRepository {
     propertyPricingId,
     propertyId,
   }: PropertyPricingById): Promise<boolean> {
-    const result = await this.collection.deleteOne({
-      propertyId,
-      propertyPricingId,
-    });
+    const result = await this.collection.deleteOne(
+      {
+        propertyId,
+        propertyPricingId,
+      },
+      { session: this.session },
+    );
     return result.deletedCount > 0;
   }
 }

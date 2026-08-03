@@ -6,6 +6,7 @@ import createUserRouter from "./user.routes.ts";
 import createRoomRouter from "./room.routes.ts";
 import createBedRouter from "./bed.routes.ts";
 import createPropertyPricingRouter from "./propertyPricing.routes.ts";
+import createPropertySetupRouter from "./propertySetup.routes.ts";
 
 
 // export default router;
@@ -18,6 +19,7 @@ export default function createApiRouter(container: Container) {
     router.use("/properties", createRoomRouter(container.roomController));
     router.use("/properties", createBedRouter(container.bedController));
     router.use("/property-pricings", createPropertyPricingRouter(container.propertyPricingController));
+    router.use("/build", createPropertySetupRouter(container.propertySetupController));
 
     return router;
 }

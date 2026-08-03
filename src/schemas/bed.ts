@@ -21,3 +21,4 @@ export type CreateBed = z.infer<typeof createBedSchema>;
 export type Bed = z.infer<typeof bedSchema>;
 
 export const responseBedListSchema = z.array(bedSchema);
+export type BedList = z.infer<typeof responseBedListSchema>;
