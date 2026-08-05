@@ -13,12 +13,10 @@ export const userSchema = z.object({
   provider: providerEnum,
   role: roleEnum,
   phone: z.string().regex(/^[6-9]\d{9}$/, 'Invalid Indian mobile number').optional(),
-  guestId: id(ID_PREFIXES.guest).nullable().default(null), // set when role === 'guest' (Phase 2+)
 });
 
 export const createUserSchema = userSchema.omit({
   userId: true,
-  guestId: true,
 });
 
 export const updateUserSchema = userSchema

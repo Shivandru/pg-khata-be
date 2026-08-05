@@ -7,12 +7,16 @@ import setupCorsMiddleware from "./middlewares/cors-setup.ts";
 import errorHandler from "./middlewares/errors.ts";
 import setupLoggerMiddleware from "./middlewares/logger.ts";
 import createApiRouter from "./routes/index.ts";
+import { createIndexes } from "./config/mongoIndexes.ts";
 
 dotenv.config();
 const PORT = env.PORT ?? 7700;
 
 async function bootstrap() {
     await MongoConnection.getInstance().connect();
+    const db = MongoConnection.getInstance().getDb();
+
+    await createIndexes(db);
 
     const app = express();
 

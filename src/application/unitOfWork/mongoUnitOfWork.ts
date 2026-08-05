@@ -7,6 +7,8 @@ import { PropertyRepository } from "../../repository/property.repository.ts";
 import { RoomRepository } from "../../repository/room.repository.ts";
 import { BedRepository } from "../../repository/bed.repository.ts";
 import { PropertyPricingRepository } from "../../repository/propertyPricing.repository.ts";
+import { GuestRepository } from "../../repository/guest.repository.ts";
+import { TenancyRepository } from "../../repository/tenancy.repository.ts";
 
 export class MongoUnitOfWork implements UnitOfWork {
   constructor(
@@ -31,6 +33,8 @@ export class MongoUnitOfWork implements UnitOfWork {
             this.db,
             session,
           ),
+          guestRepository: new GuestRepository(this.db, session),
+          tenancyRepository: new TenancyRepository(this.db, session),
         };
 
         result = await work(repositories);

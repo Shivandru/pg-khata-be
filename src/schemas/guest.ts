@@ -10,11 +10,19 @@ export const guestSchema = z.object({
   // Stays null until Phase 2 guest self-service login is introduced.
   // Tenancy/PaymentRecord reference guestId directly, so linking a userId
   // later never requires touching those collections.
-  userId: id(ID_PREFIXES.user).nullable().default(null),
+  userId: id(ID_PREFIXES.user),
 });
 
 export const createGuestSchema = guestSchema.omit({ guestId: true, userId: true });
 
 export const updateGuestSchema = guestSchema
-  .pick({ name: true, phone: true, email: true, kycInfo: true })
+  .pick({ phone: true })
   .partial();
+
+export const registerGuestSchema = z.object({
+    phone: z.string().regex(/^[6-9]\d{9}$/),
+});
+
+export type Guest = z.infer<typeof guestSchema>;
+export type CreateGuest = z.infer<typeof createGuestSchema>;
+export type UpdateGuest = z.infer<typeof updateGuestSchema>;

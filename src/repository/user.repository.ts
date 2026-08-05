@@ -18,7 +18,6 @@ export class UserRepository {
         const userId = generateId(ID_PREFIXES.user);
         const newUser: User = {
             userId,
-            guestId: null,
             ...userData,
         };
         await this.collection.insertOne(newUser);

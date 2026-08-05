@@ -3,11 +3,12 @@ import { id, ID_PREFIXES, dateOnly } from '../utils/common.ts';
 
 export const tenancySchema = z.object({
   tenancyId: id(ID_PREFIXES.tenancy),
+  propertyId: id(ID_PREFIXES.property),
   guestId: id(ID_PREFIXES.guest),
+  roomId: id(ID_PREFIXES.room),
   bedId: id(ID_PREFIXES.bed),
   startDate: dateOnly,
   endDate: dateOnly.nullable().default(null),
-  agreedRent: z.number().positive(),
   isActive: z.boolean().default(true),
 });
 
@@ -15,6 +16,7 @@ export const tenancySchema = z.object({
 // never set directly by the client
 export const createTenancySchema = tenancySchema.omit({
   tenancyId: true,
+  guestId: true,
   endDate: true,
   isActive: true,
 });
@@ -23,3 +25,15 @@ export const createTenancySchema = tenancySchema.omit({
 export const vacateTenancySchema = z.object({
   endDate: dateOnly,
 });
+
+export const updateTenancySchema = tenancySchema
+  .pick({
+    endDate: true,
+    isActive: true,
+  })
+  .partial();
+
+export type UpdateTenancy = z.infer<typeof updateTenancySchema>;
+export type Tenancy = z.infer<typeof tenancySchema>;
+export type CreateTenancy = z.infer<typeof createTenancySchema>;
+export type VacateTenancy = z.infer<typeof vacateTenancySchema>;

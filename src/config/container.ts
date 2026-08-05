@@ -22,6 +22,13 @@ import { PropertyPricingController } from "../controllers/propertyPricing.contro
 import { MongoUnitOfWork } from "../application/unitOfWork/mongoUnitOfWork.ts";
 import { PropertySetupService } from "../services/propertySetup.service.ts";
 import { PropertySetupController } from "../controllers/propertySetup.controller.ts";
+import { GuestRepository } from "../repository/guest.repository.ts";
+import { GuestRegistrationController } from "../controllers/guestRegistration.controller.ts";
+import { GuestRegistrationService } from "../services/guestRegistration.service.ts";
+import { TenancyRegistrationController } from "../controllers/tenancyRegistration.controller.ts";
+import { TenancyRegistrationService } from "../services/tenancyRegistration.service.ts";
+import { VacateTenancyController } from "../controllers/vacateTenancy.controller.ts";
+import { VacateTenancyService } from "../services/vacateTenancyService.ts";
 
 export interface Container {
   propertyController: PropertyController;
@@ -31,6 +38,9 @@ export interface Container {
   authController: AuthController;
   propertyPricingController: PropertyPricingController;
   propertySetupController: PropertySetupController;
+  guestRegistrationController: GuestRegistrationController;
+  tenancyRegistrationController: TenancyRegistrationController;
+  vacateTenancyController: VacateTenancyController;
 }
 
 export function buildContainer(): Container {
@@ -44,6 +54,7 @@ export function buildContainer(): Container {
   const bedRepository = new BedRepository(db);
   const userRepository = new UserRepository(db);
   const propertyPricingRepository = new PropertyPricingRepository(db);
+  const guestRepository = new GuestRepository(db);
 
   // Services
   const propertyService = new PropertyService(propertyRepository);
@@ -66,6 +77,15 @@ export function buildContainer(): Container {
 
   const propertySetupService = new PropertySetupService(unitOfWork);
 
+  const guestRegistrationService = new GuestRegistrationService(
+    guestRepository,
+    userRepository,
+  );
+
+  const tenancyRegistrationService = new TenancyRegistrationService(unitOfWork);
+
+  const vacateTenancyService = new VacateTenancyService(unitOfWork);
+
   // Controllers
   const propertyController = new PropertyController(propertyService);
 
@@ -85,6 +105,12 @@ export function buildContainer(): Container {
     propertySetupService,
   );
 
+  const guestRegistrationController = new GuestRegistrationController(guestRegistrationService);
+
+  const tenancyRegistrationController = new TenancyRegistrationController(tenancyRegistrationService);
+
+  const vacateTenancyController = new VacateTenancyController(vacateTenancyService);
+
   return {
     propertyController,
     roomController,
@@ -93,5 +119,8 @@ export function buildContainer(): Container {
     authController,
     propertyPricingController,
     propertySetupController,
+    guestRegistrationController,
+    tenancyRegistrationController,
+    vacateTenancyController
   };
 }
