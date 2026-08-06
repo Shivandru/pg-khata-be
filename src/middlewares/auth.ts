@@ -1,43 +1,39 @@
 import type { Request, Response, NextFunction } from "express";
+import { UnauthorizedException } from "../utils/exceptions/client.ts";
+import { verifyAccessToken } from "../utils/jwt.ts";
 
 declare global {
-    namespace Express {
-        interface Request {
-            user?: {
-                userId: string;
-                role: "owner" | "guest";
-            };
-        }
+  namespace Express {
+    interface Request {
+      user?: {
+        userId: string;
+        email: string;
+        role: "owner" | "guest" | null;
+      };
     }
+  }
 }
 
-export function authMiddleware(req: Request, _res: Response, next: NextFunction) {
-    const authHeader = req.headers["authorization"];
-    const xUserId = req.headers["x-user-id"];
-    const xUserRole = req.headers["x-user-role"];
+export function authMiddleware(
+  req: Request,
+  _res: Response,
+  next: NextFunction,
+) {
+  const authHeader = req.headers.authorization;
 
-    let userId: string | null = null;
-    let role: "owner" | "guest" = "owner";
+  if (!authHeader?.startsWith("Bearer ")) {
+    throw new UnauthorizedException("Missing access token.");
+  }
 
-    if (authHeader && authHeader.startsWith("Bearer ")) {
-        userId = authHeader.substring(7).trim();
-    } else if (typeof xUserId === "string") {
-        userId = xUserId.trim();
-    }
+  const token = authHeader.substring(7).trim();
 
-    if (typeof xUserRole === "string" && (xUserRole === "owner" || xUserRole === "guest")) {
-        role = xUserRole as "owner" | "guest";
-    }
+  const payload = verifyAccessToken(token);
 
-    // Fallback to a default owner for development/testing if not specified
-    if (!userId) {
-        userId = "u-defaultOwner";
-    }
+  req.user = {
+    userId: payload.userId,
+    email: payload.email,
+    role: payload.role,
+  };
 
-    req.user = {
-        userId,
-        role,
-    };
-
-    next();
+  next();
 }

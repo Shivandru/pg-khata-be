@@ -29,6 +29,7 @@ import { TenancyRegistrationController } from "../controllers/tenancyRegistratio
 import { TenancyRegistrationService } from "../services/tenancyRegistration.service.ts";
 import { VacateTenancyController } from "../controllers/vacateTenancy.controller.ts";
 import { VacateTenancyService } from "../services/vacateTenancyService.ts";
+import { GoogleAuthService } from "../services/googleAuth.service.ts";
 
 export interface Container {
   propertyController: PropertyController;
@@ -72,8 +73,9 @@ export function buildContainer(): Container {
   );
 
   const userServices = new UserServices(userRepository);
+  const googleAuthService = new GoogleAuthService();
 
-  const authService = new AuthService(userRepository);
+  const authService = new AuthService(userRepository, googleAuthService);
 
   const propertySetupService = new PropertySetupService(unitOfWork);
 

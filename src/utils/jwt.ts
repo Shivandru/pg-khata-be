@@ -12,7 +12,7 @@ const SECRET: string = JWT_SECRET;
 export interface AccessTokenPayload {
     userId: string;
     email: string;
-    role: Role;
+    role: Role | null;
 }
 
 export function generateAccessToken(payload: AccessTokenPayload): string {

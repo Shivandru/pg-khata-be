@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { id, ID_PREFIXES } from '../utils/common.ts';
 
-export const roleEnum = z.enum(['owner', 'guest']); // 'host' joins in Phase 3
+export const roleEnum = z.enum(['owner', 'guest']).nullable(); // 'host' joins in Phase 3
 export const providerEnum = z.enum(['google']);
 export type Provider = z.infer<typeof providerEnum>;
 export type Role = z.infer<typeof roleEnum>;
@@ -13,6 +13,7 @@ export const userSchema = z.object({
   provider: providerEnum,
   role: roleEnum,
   phone: z.string().regex(/^[6-9]\d{9}$/, 'Invalid Indian mobile number').optional(),
+  avatar: z.string().url().nullable().optional(),
 });
 
 export const createUserSchema = userSchema.omit({
@@ -24,6 +25,8 @@ export const updateUserSchema = userSchema
     name: true,
     email: true,
     phone: true,
+    avatar: true,
+    role: true,
   })
   .partial()
   .strict()
@@ -33,6 +36,10 @@ export const updateUserSchema = userSchema
       message: "At least one field must be provided.",
     }
   );
+
+  export const googleAuthSchema = z.object({
+  idToken: z.string().min(1),
+});
 
 export const authResponseSchema = z.object({
   user: userSchema,

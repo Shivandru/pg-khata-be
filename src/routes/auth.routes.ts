@@ -1,8 +1,8 @@
-import AppRouter from "./AppRouter.ts";
-import { createValidator } from "../middlewares/validator.ts";
-import RequestLogger from "../middlewares/RequestLogger.ts";
-import { createUserSchema, authResponseSchema } from "../schemas/user.ts";
 import { AuthController } from "../controllers/auth.controller.ts";
+import RequestLogger from "../middlewares/RequestLogger.ts";
+import { createValidator } from "../middlewares/validator.ts";
+import { authResponseSchema, googleAuthSchema } from "../schemas/user.ts";
+import AppRouter from "./AppRouter.ts";
 
 export default function createAuthRouter(
     authController: AuthController
@@ -14,7 +14,7 @@ router.use("/", RequestLogger.getMiddleware("Auth"));
 
 router.post(
     "/signup",
-    validate.body(createUserSchema),
+    validate.body(googleAuthSchema),
     validate.response(authResponseSchema),
     authController.signup
 );
