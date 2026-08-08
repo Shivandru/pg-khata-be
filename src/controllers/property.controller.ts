@@ -36,4 +36,14 @@ export class PropertyController {
         const property = await this.propertyService.update(id, req.body);
         res.status(HttpStatusCodes.Success.OK).json(property);
     };
+
+    getAll = async (_req: Request, res: Response) => {
+        const properties = await this.propertyService.getAll();
+        res.status(HttpStatusCodes.Success.OK).json(properties);
+    };
+
+    getByOwner = async (req: Request, res: Response) => {
+        const property = await this.propertyService.getByOwnerId(req.user!.userId);
+        res.status(HttpStatusCodes.Success.OK).json(property);
+    };
 }

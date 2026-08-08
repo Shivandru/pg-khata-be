@@ -40,4 +40,12 @@ export class PropertyService {
         RequestLogger.info(`Property updated: ${propertyId}`);
         return updatedProperty;
     }
+
+    async getAll() {
+        return await this.propertyRepository.findAll();
+    }
+
+    async getByOwnerId(ownerId: string) {
+        return await this.propertyRepository.findByOwnerId(ownerId);
+    }
 }

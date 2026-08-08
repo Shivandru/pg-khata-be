@@ -53,8 +53,8 @@ export class UserController {
       if (!id) {
         throw new Error("Missing property ID parameter");
       }
-      const user = await this.userService.update(id, req.body);
-      res.status(HttpStatusCodes.Success.OK).json(user);
+      const result = await this.userService.update(id, req.body);
+      res.status(HttpStatusCodes.Success.OK).json(result);
     } catch (error) {
       res
         .status(HttpStatusCodes.ServerError.INTERNAL_SERVER_ERROR)

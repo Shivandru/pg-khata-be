@@ -33,4 +33,12 @@ export class PropertyRepository {
         await this.collection.updateOne({ propertyId }, { $set: updateData }, { session: this.session });
         return await this.findById(propertyId);
     }
+
+    async findAll(): Promise<Property[]> {
+        return await this.collection.find({}, { session: this.session }).toArray();
+    }
+
+    async findByOwnerId(ownerId: string): Promise<Property | null> {
+        return await this.collection.findOne({ ownerId }, { session: this.session });
+    }
 }

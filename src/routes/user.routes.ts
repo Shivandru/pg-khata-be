@@ -1,10 +1,11 @@
 import AppRouter from "./AppRouter.ts";
 import { createValidator } from "../middlewares/validator.ts";
 import RequestLogger from "../middlewares/RequestLogger.ts";
-import {createUserSchema, updateUserSchema, userSchema} from "../schemas/user.ts";
+import {createUserSchema, updateUserSchema, userSchema, authResponseSchema} from "../schemas/user.ts";
 import { z } from "zod";
 import { id, ID_PREFIXES } from "../utils/common.ts";
 import { UserController } from "../controllers/user.controller.ts";
+import { authMiddleware } from "../middlewares/auth.ts";
 
 export default function createUserRouter(
     userController: UserController,
@@ -33,11 +34,12 @@ router.get(
     userController.getUser
 )
 
+router.use("/", authMiddleware);
 router.patch(
     "/:id",
     validate.params(userIdParamSchema),
     validate.body(updateUserSchema),
-    validate.response(userSchema),
+    validate.response(authResponseSchema),
     userController.update
 )
 

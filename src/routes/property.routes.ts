@@ -26,12 +26,26 @@ export default function createPropertyRouter(
     id: id(ID_PREFIXES.property),
   });
 
+  // Get all properties
+  router.get(
+    "/",
+    validate.response(z.array(responsePropertySchema)),
+    propertyController.getAll,
+  );
+
   // Create property
   router.post(
     "/",
     validate.body(createPropertySchema),
     validate.response(responsePropertySchema),
     propertyController.create,
+  );
+
+  // Get owner's own property
+  router.get(
+    "/me",
+    validate.response(responsePropertySchema.nullable()),
+    propertyController.getByOwner,
   );
 
   // Get property by ID

@@ -17,4 +17,11 @@ export class GuestRegistrationController {
 
         res.status(HttpStatusCodes.Success.CREATED).json(guest);
     };
+
+    getMe = async (req: Request, res: Response) => {
+        const guest = await this.guestRegistrationService.getGuestByUserId(
+            req.user?.userId as string
+        );
+        res.status(HttpStatusCodes.Success.OK).json(guest);
+    };
 }

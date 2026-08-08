@@ -36,4 +36,12 @@ export class GuestRegistrationService {
       kycInfo: {},
     });
   }
+
+  async getGuestByUserId(userId: string): Promise<Guest> {
+    const guest = await this.guestRepository.getGuestByUserId(userId);
+    if (!guest) {
+      throw new NotFoundException(`Guest profile for user ${userId} not found`);
+    }
+    return guest;
+  }
 }

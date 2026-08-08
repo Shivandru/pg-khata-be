@@ -44,4 +44,8 @@ export class GuestRepository {
 
     return result.deletedCount > 0;
   }
+
+  async getGuestsByIds(guestIds: string[]): Promise<Guest[]> {
+    return await this.collection.find({ guestId: { $in: guestIds } }, { session: this.session }).toArray();
+  }
 }

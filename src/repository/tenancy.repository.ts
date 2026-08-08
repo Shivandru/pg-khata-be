@@ -73,4 +73,7 @@ async create(tenancyData: CreateTenancy & { guestId: string }): Promise<Tenancy>
     return result.deletedCount > 0;
   }
 
+  async getActiveTenanciesByPropertyId(propertyId: string): Promise<Tenancy[]> {
+    return await this.collection.find({ propertyId, isActive: true }, { session: this.session }).toArray();
+  }
 }

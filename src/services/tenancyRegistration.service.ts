@@ -95,4 +95,28 @@ export class TenancyRegistrationService {
       return tenancy;
     });
   }
+
+  async getActiveTenancy(userId: string): Promise<Tenancy | null> {
+    return await this.unitOfWork.execute(async (repositories) => {
+      const guest = await repositories.guestRepository.getGuestByUserId(userId);
+      if (!guest) {
+        throw new NotFoundException("Guest profile not found.");
+      }
+      return await repositories.tenancyRepository.getActiveTenancyByGuestId(guest.guestId);
+    });
+  }
+
+  async getTenanciesByProperty(propertyId: string): Promise<Tenancy[]> {
+    return await this.unitOfWork.execute(async (repositories) => {
+      return await repositories.tenancyRepository.getActiveTenanciesByPropertyId(propertyId);
+    });
+  }
+
+  async getGuestsByProperty(propertyId: string) {
+    return await this.unitOfWork.execute(async (repositories) => {
+      const tenancies = await repositories.tenancyRepository.getActiveTenanciesByPropertyId(propertyId);
+      const guestIds = tenancies.map((t) => t.guestId);
+      return await repositories.guestRepository.getGuestsByIds(guestIds);
+    });
+  }
 }
