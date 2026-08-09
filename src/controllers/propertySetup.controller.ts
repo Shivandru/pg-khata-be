@@ -7,8 +7,8 @@ export class PropertySetupController {
   constructor(private readonly propertySetupService: PropertySetupService) {}
 
   setup = async (req: Request, res: Response) => {
-    const ownerId = req.user?.userId as string;
-    const result = await this.propertySetupService.setup(ownerId, req.body);
+    const userId = req.user?.userId as string;
+    const result = await this.propertySetupService.setup(userId, req.body);
 
     res.status(HttpStatusCodes.Success.CREATED).json(result);
   };

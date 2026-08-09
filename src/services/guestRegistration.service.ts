@@ -11,7 +11,7 @@ export class GuestRegistrationService {
     private readonly guestRepository: GuestRepository,
     private readonly userRepository: UserRepository,
   ) {}
-  async register(userId: string, phone: string): Promise<Guest> {
+  async register(userId: string): Promise<Guest> {
     const user = await this.userRepository.getUserById(userId);
 
     if (!user) {
@@ -30,9 +30,6 @@ export class GuestRegistrationService {
 
     return await this.guestRepository.create({
       userId,
-      name: user.name,
-      email: user.email,
-      phone,
       kycInfo: {},
     });
   }

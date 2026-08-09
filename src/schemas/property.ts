@@ -7,7 +7,7 @@ export const propertySchema = z.object({
   propertyId: id(ID_PREFIXES.property),
   name: z.string().min(2).max(100),
   address: z.string().min(5).max(300),
-  ownerId: id(ID_PREFIXES.user),
+  ownerId: id(ID_PREFIXES.owner),
 });
  
 // What the API accepts on create.

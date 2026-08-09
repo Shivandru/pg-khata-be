@@ -112,11 +112,42 @@ export class TenancyRegistrationService {
     });
   }
 
+  // async getGuestsByProperty(propertyId: string) {
+  //   return await this.unitOfWork.execute(async (repositories) => {
+  //     const tenancies = await repositories.tenancyRepository.getActiveTenanciesByPropertyId(propertyId);
+  //     const guestIds = tenancies.map((t) => t.guestId);
+  //     return await repositories.guestRepository.getGuestsByIds(guestIds);
+  //   });
+  // }
   async getGuestsByProperty(propertyId: string) {
-    return await this.unitOfWork.execute(async (repositories) => {
-      const tenancies = await repositories.tenancyRepository.getActiveTenanciesByPropertyId(propertyId);
-      const guestIds = tenancies.map((t) => t.guestId);
-      return await repositories.guestRepository.getGuestsByIds(guestIds);
+  return await this.unitOfWork.execute(async (repositories) => {
+    const tenancies =
+      await repositories.tenancyRepository.getActiveTenanciesByPropertyId(
+        propertyId,
+      );
+
+    const guestIds = tenancies.map((t) => t.guestId);
+
+    const guests =
+      await repositories.guestRepository.getGuestsByIds(guestIds);
+
+    const userIds = guests.map((guest) => guest.userId);
+
+    const users =
+      await repositories.userRepository.getUsersByIds(userIds);
+
+    return guests.map((guest) => {
+      const user = users.find((user) => user.userId === guest.userId);
+
+      return {
+        guestId: guest.guestId,
+        userId: guest.userId,
+        name: user?.name ?? "",
+        email: user?.email ?? "",
+        phone: user?.phone,
+        avatar: user?.avatar,
+      };
     });
-  }
+  });
+}
 }

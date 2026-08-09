@@ -6,16 +6,19 @@ import type {
 import type { BedList } from "../schemas/bed.ts";
 import type { RoomListSchema } from "../schemas/room.ts";
 import { buildBeds } from "../utils/bed.ts";
+import type { OwnerRepository } from "../repository/owner.repository.ts";
 
 export class PropertySetupService {
   constructor(
     private readonly unitOfWork: UnitOfWork,
+    private readonly ownerRepository: OwnerRepository,
   ) {}
 
   async setup(
-    ownerId: string,
+    userId: string,
     request: PropertySetupRequest,
   ): Promise<PropertySetupResponse> {
+    const owner = await this.ownerRepository.getOwnerByUserId(userId);
     return this.unitOfWork.execute(async (repositories) => {
       const {
         propertyRepository,
@@ -30,7 +33,7 @@ export class PropertySetupService {
       const property = await propertyRepository.create({
         name: request.name,
         address: request.address,
-        ownerId,
+        ownerId: owner?.ownerId!,
       });
 
       const propertyPricing = await propertyPricingRepository.create(

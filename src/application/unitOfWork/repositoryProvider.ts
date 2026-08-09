@@ -6,6 +6,7 @@ import type { PropertyRepository } from "../../repository/property.repository.ts
 import type { PropertyPricingRepository } from "../../repository/propertyPricing.repository.ts";
 import type { RoomRepository } from "../../repository/room.repository.ts";
 import type { TenancyRepository } from "../../repository/tenancy.repository.ts";
+import type { UserRepository } from "../../repository/user.repository.ts";
 
 
 export interface RepositoryProvider {
@@ -15,4 +16,5 @@ export interface RepositoryProvider {
     bedRepository: BedRepository;
     guestRepository: GuestRepository;
     tenancyRepository: TenancyRepository;
+    userRepository: UserRepository;
 }

@@ -8,11 +8,9 @@ export class GuestRegistrationController {
     ) {}
 
     register = async (req: Request, res: Response) => {
-        const { phone } = req.body;
 
         const guest = await this.guestRegistrationService.register(
             req.user?.userId as string,
-            phone,
         );
 
         res.status(HttpStatusCodes.Success.CREATED).json(guest);

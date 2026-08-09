@@ -2,20 +2,27 @@ import { PropertyRepository } from "../repository/property.repository.ts";
 import { NotFoundException } from "../utils/exceptions/client.ts";
 import RequestLogger from "../middlewares/RequestLogger.ts";
 import type { UpdateProperty } from "../schemas/property.ts";
+import type { OwnerRepository } from "../repository/owner.repository.ts";
 
 type CreateProperty = {
     name: string;
     address: string;
-    ownerId: string;
+    userId: string;
 };
 
 export class PropertyService {
 
     constructor(
-        private readonly propertyRepository: PropertyRepository
+        private readonly propertyRepository: PropertyRepository,
+        private readonly ownerRepository: OwnerRepository
     ) {}
 
-    async create({name, address, ownerId}: CreateProperty) {
+    async create({ name, address, userId }: CreateProperty) {
+        const owner = await this.ownerRepository.getOwnerByUserId(userId);
+        if (!owner) {
+            throw new NotFoundException(`Owner with ID ${userId} not found`);
+        }
+        const ownerId = owner.ownerId;
         const property = await this.propertyRepository.create({ name, address, ownerId });
         RequestLogger.info(`Property created: ${property.name} (${property.propertyId})`);
         return property;
@@ -45,7 +52,12 @@ export class PropertyService {
         return await this.propertyRepository.findAll();
     }
 
-    async getByOwnerId(ownerId: string) {
+    async getByOwnerId(userId: string) {
+        const owner = await this.ownerRepository.getOwnerByUserId(userId);
+        if (!owner) {
+            throw new NotFoundException(`Owner with ID ${userId} not found`);
+        }
+        const ownerId = owner.ownerId;
         return await this.propertyRepository.findByOwnerId(ownerId);
     }
 }

@@ -1,13 +1,13 @@
 import { z } from "zod";
-import AppRouter from "./AppRouter.ts";
+import type { TenancyRegistrationController } from "../controllers/tenancyRegistration.controller.ts";
+import type { VacateTenancyController } from "../controllers/vacateTenancy.controller.ts";
 import { authMiddleware } from "../middlewares/auth.ts";
 import RequestLogger from "../middlewares/RequestLogger.ts";
 import { createValidator } from "../middlewares/validator.ts";
+import { guestListResponseSchema } from "../schemas/guest.ts";
 import { createTenancySchema, tenancySchema, vacateTenancySchema } from "../schemas/tenancy.ts";
-import { guestSchema } from "../schemas/guest.ts";
-import type { TenancyRegistrationController } from "../controllers/tenancyRegistration.controller.ts";
 import { id, ID_PREFIXES } from "../utils/common.ts";
-import type { VacateTenancyController } from "../controllers/vacateTenancy.controller.ts";
+import AppRouter from "./AppRouter.ts";
 
 export default function createTenancyRegistrationRouter(
   controller: TenancyRegistrationController,
@@ -39,7 +39,7 @@ export default function createTenancyRegistrationRouter(
   router.get(
     "/property/:propertyId/guests",
     validate.params(z.object({ propertyId: id(ID_PREFIXES.property) })),
-    validate.response(z.array(guestSchema)),
+    validate.response(guestListResponseSchema),
     controller.getGuestsByProperty,
   );
 

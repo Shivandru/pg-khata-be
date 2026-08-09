@@ -34,6 +34,11 @@ import { RoomSetupService } from "../services/roomSetup.service.ts";
 import { RoomSetupController } from "../controllers/roomSetup.controller.ts";
 import { BedSetupController } from "../controllers/bedSetup.controller.ts";
 import { BedSetupService } from "../services/bedSetup.service.ts";
+import { OwnerController } from "../controllers/owner.controller.ts";
+import { OwnerRepository } from "../repository/owner.repository.ts";
+import { OwnerService } from "../services/owner.service.ts";
+import { ProfileController } from "../controllers/profile.controller.ts";
+import { ProfileService } from "../services/profile.service.ts";
 
 export interface Container {
   propertyController: PropertyController;
@@ -48,6 +53,8 @@ export interface Container {
   vacateTenancyController: VacateTenancyController;
   roomSetupController: RoomSetupController;
   bedSetupController: BedSetupController;
+  ownerController: OwnerController;
+  profileController: ProfileController;
 }
 
 export function buildContainer(): Container {
@@ -62,9 +69,10 @@ export function buildContainer(): Container {
   const userRepository = new UserRepository(db);
   const propertyPricingRepository = new PropertyPricingRepository(db);
   const guestRepository = new GuestRepository(db);
+  const ownerRepository = new OwnerRepository(db);
 
   // Services
-  const propertyService = new PropertyService(propertyRepository);
+  const propertyService = new PropertyService(propertyRepository, ownerRepository);
 
   const roomService = new RoomService(
     roomRepository,
@@ -83,7 +91,7 @@ export function buildContainer(): Container {
 
   const authService = new AuthService(userRepository, googleAuthService);
 
-  const propertySetupService = new PropertySetupService(unitOfWork);
+  const propertySetupService = new PropertySetupService(unitOfWork, ownerRepository);
 
   const guestRegistrationService = new GuestRegistrationService(
     guestRepository,
@@ -97,6 +105,10 @@ export function buildContainer(): Container {
   const roomSetupService = new RoomSetupService(unitOfWork);
 
   const bedSetupService = new BedSetupService(unitOfWork);
+
+  const ownerService = new OwnerService(ownerRepository);
+
+  const profileService = new ProfileService(userRepository, guestRepository, ownerRepository);
 
   // Controllers
   const propertyController = new PropertyController(propertyService);
@@ -124,6 +136,8 @@ export function buildContainer(): Container {
   const vacateTenancyController = new VacateTenancyController(vacateTenancyService);
   const roomSetupController = new RoomSetupController(roomSetupService);
   const bedSetupController = new BedSetupController(bedSetupService);
+  const ownerController = new OwnerController(ownerService);
+  const profileController = new ProfileController(profileService);
 
   return {
     propertyController,
@@ -137,6 +151,8 @@ export function buildContainer(): Container {
     tenancyRegistrationController,
     vacateTenancyController,
     roomSetupController,
-    bedSetupController
+    bedSetupController,
+    ownerController,
+    profileController
   };
 }

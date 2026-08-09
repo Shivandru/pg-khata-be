@@ -11,6 +11,8 @@ import createGuestRouter from "./guest.routes.ts";
 import createTenancyRegistrationRouter from "./tenancy.routes.ts";
 import createRoomSetupRouter from "./roomSetup.routes.ts";
 import createBedSetupRouter from "./bedSetup.routes.ts";
+import createOwnerRouter from "./owner.routes.ts";
+import createProfileRouter from "./profile.routes.ts";
 
 // export default router;
 export default function createApiRouter(container: Container) {
@@ -44,6 +46,10 @@ export default function createApiRouter(container: Container) {
   router.use("/room-setup", createRoomSetupRouter(container.roomSetupController));
 
   router.use("/bed-setup", createBedSetupRouter(container.bedSetupController));
+
+  router.use("/owner", createOwnerRouter(container.ownerController));
+
+  router.use("/profile", createProfileRouter(container.profileController));
 
   return router;
 }

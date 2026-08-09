@@ -13,11 +13,11 @@ export default function createGuestRouter(guestController: GuestRegistrationCont
   router.use("/", RequestLogger.getMiddleware("Guest"));
   router.use("/", authMiddleware);
 
-  router.get(
-    "/me",
-    validate.response(guestSchema),
-    guestController.getMe,
-  );
+  // router.get(
+  //   "/me",
+  //   validate.response(guestSchema),
+  //   guestController.getMe,
+  // );
 
   router.post(
     "/",
