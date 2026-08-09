@@ -4,6 +4,7 @@ import cors, { type CorsOptions } from "cors";
 
 const allowedOrigins = [
     "http://localhost:3000",
+    "https://pg-khata.vercel.app"
 ];
 
 const ngrokRegex = /^https:\/\/.*\.ngrok-free\.app/;

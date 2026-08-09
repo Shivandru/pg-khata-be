@@ -2,6 +2,7 @@ import cors, {} from "cors";
 // import  from "@types/cors";
 const allowedOrigins = [
     "http://localhost:3000",
+    "https://pg-khata.vercel.app"
 ];
 const ngrokRegex = /^https:\/\/.*\.ngrok-free\.app/;
 export const corsVerifier = (origin, callback) => {
