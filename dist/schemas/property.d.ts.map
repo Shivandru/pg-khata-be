@@ -1,0 +1,1 @@
+{"version":3,"file":"property.d.ts","sourceRoot":"","sources":["../../src/schemas/property.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,CAAC,EAAE,MAAM,KAAK,CAAC;AAKxB,eAAO,MAAM,cAAc;;;;;iBAKzB,CAAC;AAKH,eAAO,MAAM,oBAAoB;;;iBAA2D,CAAC;AAG7F,eAAO,MAAM,oBAAoB;;;iBAErB,CAAC;AAGb,eAAO,MAAM,sBAAsB;;;;;iBAAiB,CAAC;AAErD,MAAM,MAAM,cAAc,GAAG,CAAC,CAAC,KAAK,CAAC,OAAO,oBAAoB,CAAC,CAAC"}

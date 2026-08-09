@@ -28,10 +28,11 @@
 
       /* ---------- Module Semantics ---------- */
       "verbatimModuleSyntax": true,
-      "allowImportingTsExtensions": true,
       "isolatedModules": true,
       "moduleDetection": "force",
-      "noEmit": true,
+      // "allowImportingTsExtensions": true,
+      // "noEmit": false,
+      "rewriteRelativeImportExtensions": true,
 
       /* ---------- Performance ---------- */
       "skipLibCheck": true,

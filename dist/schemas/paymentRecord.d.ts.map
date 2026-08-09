@@ -1,0 +1,1 @@
+{"version":3,"file":"paymentRecord.d.ts","sourceRoot":"","sources":["../../src/schemas/paymentRecord.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,CAAC,EAAE,MAAM,KAAK,CAAC;AAGxB,eAAO,MAAM,iBAAiB;;;EAA8B,CAAC;AAE7D,eAAO,MAAM,mBAAmB;;;;;;;;;;;iBAQ9B,CAAC;AAGH,eAAO,MAAM,sBAAsB;;iBAEjC,CAAC;AAKH,eAAO,MAAM,mBAAmB;;;;;;;iBAU7B,CAAC"}

@@ -1,0 +1,1 @@
+{"version":3,"file":"bedSetup.controller.d.ts","sourceRoot":"","sources":["../../src/controllers/bedSetup.controller.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,OAAO,EAAE,QAAQ,EAAE,MAAM,SAAS,CAAC;AACjD,OAAO,KAAK,EAAE,eAAe,EAAE,MAAM,iCAAiC,CAAC;AAIvE,qBAAa,kBAAkB;IAE3B,OAAO,CAAC,QAAQ,CAAC,eAAe;gBAAf,eAAe,EAAE,eAAe;IAGnD,KAAK,GAAU,KAAK,OAAO,EAAE,KAAK,QAAQ,mBAMxC;CACH"}

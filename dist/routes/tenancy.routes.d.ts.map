@@ -1,0 +1,1 @@
+{"version":3,"file":"tenancy.routes.d.ts","sourceRoot":"","sources":["../../src/routes/tenancy.routes.ts"],"names":[],"mappings":"AACA,OAAO,KAAK,EAAE,6BAA6B,EAAE,MAAM,kDAAkD,CAAC;AACtG,OAAO,KAAK,EAAE,uBAAuB,EAAE,MAAM,4CAA4C,CAAC;AAO1F,OAAO,SAAS,MAAM,gBAAgB,CAAC;AAEvC,MAAM,CAAC,OAAO,UAAU,+BAA+B,CACrD,UAAU,EAAE,6BAA6B,EACzC,gBAAgB,EAAE,uBAAuB,aAgD1C"}
