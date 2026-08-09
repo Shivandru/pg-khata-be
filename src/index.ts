@@ -13,27 +13,33 @@ dotenv.config();
 const PORT = env.PORT ?? 7700;
 
 async function bootstrap() {
-    await MongoConnection.getInstance().connect();
-    const db = MongoConnection.getInstance().getDb();
+  await MongoConnection.getInstance().connect();
+  const db = MongoConnection.getInstance().getDb();
 
-    await createIndexes(db);
+  await createIndexes(db);
 
-    const app = express();
+  const app = express();
 
-    app.use(express.json());
+  app.use(express.json());
 
-    setupCorsMiddleware(app);
-    setupLoggerMiddleware(app);
-    const container = buildContainer();
-    const apiRouter = createApiRouter(container);
-
-    app.use(apiRouter.getRouter());
-
-    app.use(errorHandler);
-
-    app.listen(PORT, () => {
-        console.log(`Server running on ${PORT}`);
+  setupCorsMiddleware(app);
+  setupLoggerMiddleware(app);
+  // Health check
+  app.get("/", (_req, res) => {
+    res.status(200).json({
+      status: "ok",
     });
+  });
+  const container = buildContainer();
+  const apiRouter = createApiRouter(container);
+
+  app.use(apiRouter.getRouter());
+
+  app.use(errorHandler);
+
+  app.listen(PORT, () => {
+    console.log(`Server running on ${PORT}`);
+  });
 }
 
 bootstrap();

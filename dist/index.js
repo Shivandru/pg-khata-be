@@ -18,6 +18,12 @@ async function bootstrap() {
     app.use(express.json());
     setupCorsMiddleware(app);
     setupLoggerMiddleware(app);
+    // Health check
+    app.get("/", (_req, res) => {
+        res.status(200).json({
+            status: "ok",
+        });
+    });
     const container = buildContainer();
     const apiRouter = createApiRouter(container);
     app.use(apiRouter.getRouter());
