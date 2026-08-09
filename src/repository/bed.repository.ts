@@ -1,8 +1,8 @@
-import type { Collection, Db, ClientSession } from "mongodb";
+import type { ClientSession, Collection, Db } from "mongodb";
 import type { z } from "zod";
 import { bedSchema, type UpdateBed } from "../schemas/bed.ts";
-import { generateId, ID_PREFIXES } from "../utils/common.ts";
 import type { RoomById } from "../services/room.service.ts";
+import { generateId, ID_PREFIXES } from "../utils/common.ts";
 
 export type Bed = z.infer<typeof bedSchema>;
 
@@ -15,13 +15,23 @@ export class BedRepository {
     return this.db.collection<Bed>("beds");
   }
 
-  async create(bedData: Omit<Bed, "bedId">): Promise<Bed> {
+  async create({ propertyId, roomId }: RoomById): Promise<Bed> {
+    const existingBeds = await this.findByRoomId(roomId, propertyId);
+
     const bedId = generateId(ID_PREFIXES.bed);
+
     const newBed: Bed = {
       bedId,
-      ...bedData,
+      propertyId,
+      roomId,
+      label: String.fromCharCode(65 + existingBeds.length), // A, B, C, D...
+      isOccupied: false,
     };
-    await this.collection.insertOne(newBed, { session: this.session });
+
+    await this.collection.insertOne(newBed, {
+      session: this.session,
+    });
+
     return newBed;
   }
 
@@ -88,6 +98,20 @@ export class BedRepository {
     return await this.findById(bedId, propertyId, roomId);
   }
 
+  async updateLabels(
+    propertyId: string,
+    roomId: string,
+    beds: Bed[],
+  ): Promise<void> {
+    for (const [index, bed] of beds.entries()) {
+      await this.collection.updateOne(
+        { propertyId, roomId, bedId: bed.bedId },
+        { $set: { label: String.fromCharCode(65 + index) } },
+        { session: this.session },
+      );
+    }
+  }
+
   async delete(
     bedId: string,
     propertyId: string,
@@ -98,6 +122,15 @@ export class BedRepository {
       { session: this.session },
     );
     return result.deletedCount > 0;
+  }
+
+  async deleteMany(propertyId: string, roomId: string): Promise<number> {
+    const result = await this.collection.deleteMany(
+      { propertyId, roomId },
+      { session: this.session },
+    );
+
+    return result.deletedCount;
   }
 
   async setOccupied(

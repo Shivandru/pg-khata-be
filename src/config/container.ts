@@ -30,6 +30,10 @@ import { TenancyRegistrationService } from "../services/tenancyRegistration.serv
 import { VacateTenancyController } from "../controllers/vacateTenancy.controller.ts";
 import { VacateTenancyService } from "../services/vacateTenancyService.ts";
 import { GoogleAuthService } from "../services/googleAuth.service.ts";
+import { RoomSetupService } from "../services/roomSetup.service.ts";
+import { RoomSetupController } from "../controllers/roomSetup.controller.ts";
+import { BedSetupController } from "../controllers/bedSetup.controller.ts";
+import { BedSetupService } from "../services/bedSetup.service.ts";
 
 export interface Container {
   propertyController: PropertyController;
@@ -42,6 +46,8 @@ export interface Container {
   guestRegistrationController: GuestRegistrationController;
   tenancyRegistrationController: TenancyRegistrationController;
   vacateTenancyController: VacateTenancyController;
+  roomSetupController: RoomSetupController;
+  bedSetupController: BedSetupController;
 }
 
 export function buildContainer(): Container {
@@ -88,6 +94,10 @@ export function buildContainer(): Container {
 
   const vacateTenancyService = new VacateTenancyService(unitOfWork);
 
+  const roomSetupService = new RoomSetupService(unitOfWork);
+
+  const bedSetupService = new BedSetupService(unitOfWork);
+
   // Controllers
   const propertyController = new PropertyController(propertyService);
 
@@ -112,6 +122,8 @@ export function buildContainer(): Container {
   const tenancyRegistrationController = new TenancyRegistrationController(tenancyRegistrationService);
 
   const vacateTenancyController = new VacateTenancyController(vacateTenancyService);
+  const roomSetupController = new RoomSetupController(roomSetupService);
+  const bedSetupController = new BedSetupController(bedSetupService);
 
   return {
     propertyController,
@@ -123,6 +135,8 @@ export function buildContainer(): Container {
     propertySetupController,
     guestRegistrationController,
     tenancyRegistrationController,
-    vacateTenancyController
+    vacateTenancyController,
+    roomSetupController,
+    bedSetupController
   };
 }

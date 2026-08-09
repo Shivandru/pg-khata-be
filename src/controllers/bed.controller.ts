@@ -17,8 +17,7 @@ export class BedController {
 
     create = async (req: Request, res: Response) => {
         const { propertyId, roomId } = req.params as RoomById;
-        const { label, isOccupied } = req.body;
-        const bed = await this.bedService.create(roomId, label, propertyId, isOccupied);
+        const bed = await this.bedService.create(roomId, propertyId);
         res.status(HttpStatusCodes.Success.CREATED).json(bed);
     };
 

@@ -70,4 +70,16 @@ export class RoomRepository {
       { session: this.session },
     );
   }
+
+  async updateBedCount(
+    propertyId: string,
+    roomId: string,
+    bedCount: number,
+  ): Promise<void> {
+    await this.collection.updateOne(
+      { propertyId, roomId },
+      { $set: { bedCount } },
+      { session: this.session },
+    );
+  }
 }

@@ -11,11 +11,12 @@ export class BedService {
         private readonly roomService: RoomService
     ) {}
 
-    async create(roomId: string, label: string, propertyId: string, isOccupied: boolean) {
+    async create(roomId: string, propertyId: string) {
         // Ensure Room exists
         await this.roomService.getById({roomId, propertyId});
 
-        const bed = await this.bedRepository.create({ roomId, label, propertyId, isOccupied });
+        const bed = await this.bedRepository.create({ roomId, propertyId });
+
         RequestLogger.info(`Bed created: Bed ${bed.label} in Room ${bed.roomId} (${bed.bedId})`);
         return bed;
     }
@@ -35,25 +36,6 @@ export class BedService {
         const beds = await this.bedRepository.findByRoomId(roomId, propertyId);
         if (beds.length === 0) return [];
 
-            // const db = MongoConnection.getInstance().getDb();
-            // const bedIds = beds.map(b => b.bedId);
-
-            // // Get all active tenancies for these beds
-            // const activeTenancies = await db.collection("tenancies").find({
-            //     bedId: { $in: bedIds },
-            //     isActive: true
-            // }).toArray();
-
-            // const activeBedIds = new Set(activeTenancies.map(t => t.bedId));
-
-            // return beds.map(bed => ({
-            //     bedId: bed.bedId,
-            //     roomId: bed.roomId,
-            //     label: bed.label,
-            //     rentAmount: bed.rentAmount,
-            //     isOccupied: activeBedIds.has(bed.bedId)
-            // }));
-
         return beds;
     }
 
@@ -69,16 +51,6 @@ export class BedService {
 
     async delete(bedId: string, propertyId: string, roomId: string) {
         await this.getById(bedId, propertyId, roomId);
-
-        // const db = MongoConnection.getInstance().getDb();
-        // const activeTenancy = await db.collection("tenancies").findOne({
-        //     bedId,
-        //     isActive: true
-        // });
-
-        // if (activeTenancy) {
-        //     throw new ConflictException(`Cannot delete bed with ID ${bedId} because it has an active tenancy`);
-        // }
 
         const deleted = await this.bedRepository.delete(bedId, propertyId, roomId);
         if (!deleted) {

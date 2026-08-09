@@ -9,7 +9,9 @@ export const bedSchema = z.object({
   isOccupied: z.boolean().default(false),
 });
 
-export const createBedSchema = bedSchema.omit({ bedId: true, roomId: true, propertyId: true });
+export const createBedSchema = bedSchema
+  .pick({})
+  .strict();
 
 export const updateBedSchema = bedSchema
   .pick({ isOccupied: true })
